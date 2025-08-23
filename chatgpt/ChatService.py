@@ -9,6 +9,7 @@ from starlette.concurrency import run_in_threadpool
 
 from api.files import get_image_size, get_file_extension, determine_file_use_case
 from api.models import model_proxy
+from utils.gizmo_utils import parse_gizmo_model, get_optimal_base_model, is_gizmo_model
 from chatgpt.authorization import get_req_token, verify_token
 from chatgpt.chatFormat import api_messages_to_chat, stream_response, format_not_stream_response, head_process_response
 from chatgpt.chatLimit import check_is_limit, handle_request_limit
@@ -138,12 +139,27 @@ class ChatService:
     async def set_model(self):
         self.origin_model = self.data.get("model", "gpt-3.5-turbo-0125")
         self.resp_model = model_proxy.get(self.origin_model, self.origin_model)
-        if "gizmo" in self.origin_model or "g-" in self.origin_model:
-            self.gizmo_id = "g-" + self.origin_model.split("g-")[-1]
-        else:
-            self.gizmo_id = None
+        
+        # Use utility function to parse Gizmo model
+        gizmo_id, base_model_hint = parse_gizmo_model(self.origin_model)
+        self.gizmo_id = gizmo_id
+        
+        # If it's a Gizmo call, use intelligent model selection
+        if self.gizmo_id:
+            # Don't pass user_persona for now, optimize again in get_chat_requirements
+            self.req_model = get_optimal_base_model(base_model_hint)
+            logger.info(f"Gizmo model mapping: {self.origin_model} -> {self.req_model} (gizmo_id: {self.gizmo_id})")
+            return
 
-        if "o3-mini-high" in self.origin_model:
+        if "o4-mini-high" in self.origin_model:
+            self.req_model = "o4-mini-high"
+        elif "o4-mini-medium" in self.origin_model:
+            self.req_model = "o4-mini-medium"
+        elif "o4-mini-low" in self.origin_model:
+            self.req_model = "o4-mini-low"
+        elif "o4-mini" in self.origin_model:
+            self.req_model = "o4-mini"
+        elif "o3-mini-high" in self.origin_model:
             self.req_model = "o3-mini-high"
         elif "o3-mini-medium" in self.origin_model:
             self.req_model = "o3-mini-medium"
@@ -159,10 +175,14 @@ class ChatService:
             self.req_model = "o1-pro"
         elif "o1-mini" in self.origin_model:
             self.req_model = "o1-mini"
+        elif "gpt-5" in self.origin_model:
+            self.req_model = "gpt-5"
         elif "o1" in self.origin_model:
             self.req_model = "o1"
         elif "gpt-4.5o" in self.origin_model:
             self.req_model = "gpt-4.5o"
+        elif "gpt-4-5" in self.origin_model:
+            self.req_model = "gpt-4-5"
         elif "gpt-4o-canmore" in self.origin_model:
             self.req_model = "gpt-4o-canmore"
         elif "gpt-4o-mini" in self.origin_model:
@@ -194,8 +214,19 @@ class ChatService:
                 resp = r.json()
 
                 self.persona = resp.get("persona")
+                
+                # Optimize Gizmo calls based on user permissions (second optimization)
+                if self.gizmo_id:
+                    # Re-parse base model hint and optimize based on user permissions
+                    _, base_model_hint = parse_gizmo_model(self.origin_model)
+                    optimal_model = get_optimal_base_model(base_model_hint, self.persona)
+                    
+                    if optimal_model != self.req_model:
+                        logger.info(f"Optimizing Gizmo model for {self.persona}: {self.req_model} -> {optimal_model}")
+                        self.req_model = optimal_model
+                        
                 if self.persona != "chatgpt-paid":
-                    if self.req_model == "gpt-4" or self.req_model == "o1-preview":
+                    if (self.req_model == "gpt-4" or self.req_model == "o1-preview") and not self.gizmo_id:
                         logger.error(f"Model {self.resp_model} not support for {self.persona}")
                         raise HTTPException(
                             status_code=404,
