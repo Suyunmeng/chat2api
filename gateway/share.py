@@ -190,7 +190,7 @@ async def chatgpt_refresh(refresh_token):
     client = Client(proxy=proxy_url)
     try:
         data = {
-            "client_id": "pdlLIX2Y72MIl2rhLhTE9VV9bN905kBh",
+            "client_id": "app_WXrF1LSkiTtfYqiL6XtjygvX",  # Updated client ID
             "grant_type": "refresh_token",
             "redirect_uri": "com.openai.chat://auth0.openai.com/ios/com.openai.chat/callback",
             "refresh_token": refresh_token
@@ -201,8 +201,15 @@ async def chatgpt_refresh(refresh_token):
         res = r.json()
         auth_info = {}
         auth_info.update(res)
-        auth_info.update({"refresh_token": refresh_token})
+        # Use new refresh_token if provided, otherwise keep the original
+        new_refresh_token = res.get("refresh_token", refresh_token)
+        auth_info.update({"refresh_token": new_refresh_token})
         auth_info.update({"accessToken": res.get("access_token", "")})
+        
+        # Log if refresh_token was updated
+        if new_refresh_token != refresh_token:
+            logger.info(f"Refresh token updated in share.py: old={refresh_token[:10]}... -> new={new_refresh_token[:10]}...")
+        
         return auth_info
     except Exception as e:
         logger.error(f"chatgpt_refresh: {e}")
