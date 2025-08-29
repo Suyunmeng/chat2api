@@ -10,6 +10,8 @@ model_proxy = {
     "gpt-4o": "gpt-4o-2024-08-06",
     "gpt-4o-mini": "gpt-4o-mini-2024-07-18",
     "gpt-4-5": "gpt-4-5",
+    "gpt-5-mini": "gpt-5-mini",
+    "gpt-5-nano": "gpt-5-nano",
     "o1-preview": "o1-preview-2024-09-12",
     "o1-mini": "o1-mini-2024-09-12",
     "o1": "o1-2024-12-18",
@@ -25,10 +27,11 @@ model_proxy = {
 # Gizmo model mapping configuration
 gizmo_model_mapping = {
     # General Gizmo prefix mapping to appropriate base models
-    "gpt-4-gizmo": "gpt-4o",           # Avoid consuming GPT-4 quota
+    "gpt-4-gizmo": "gpt-4o",            # Updated to use GPT-5
     "gpt-4o-gizmo": "gpt-4o",          # Maintain consistency
     "gpt-4-turbo-gizmo": "gpt-4-turbo", # Keep advanced features with original model
     "gpt-3.5-gizmo": "text-davinci-002-render-sha",  # 3.5 Gizmo
+    "gpt-5-gizmo": "gpt-5",            # GPT-5 Gizmo
 }
 
 model_system_fingerprint = {

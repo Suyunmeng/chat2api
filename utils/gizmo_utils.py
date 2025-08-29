@@ -39,7 +39,7 @@ def parse_gizmo_model(model_name: str) -> Tuple[Optional[str], str]:
         if "-g-" in model_lower:
             base_model_hint = model_name.split("-g-")[0]
         else:
-            base_model_hint = "gpt-4o"  # default
+            base_model_hint = "gpt-5"  # default
     
     return gizmo_id, base_model_hint
 
@@ -91,8 +91,12 @@ def get_optimal_base_model(base_model_hint: str, user_persona: str = None) -> st
         return "o1" if is_paid_user else "gpt-4o"
     
     # GPT-5 series
+    elif "gpt-5-nano" in hint_lower:
+        return "gpt-5-nano" if is_paid_user else "gpt-5"
+    elif "gpt-5-mini" in hint_lower:
+        return "gpt-5-mini" if is_paid_user else "gpt-5"
     elif "gpt-5" in hint_lower:
-        return "gpt-5" if is_paid_user else "gpt-4o"
+        return "gpt-5"
     
     # GPT-4 series
     elif "gpt-4.5o" in hint_lower:

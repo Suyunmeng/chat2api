@@ -4,7 +4,7 @@
 
 🌟 无需账号即可使用免费、无限的 `GPT-3.5`
 
-💥 支持 AccessToken 使用账号，支持 `O3-mini/high`、`O1/mini/Pro`、`GPT-4/4o/mini`、`GPTs`
+💥 支持 AccessToken 使用账号，支持 `O3-mini/high`、`O1/mini/Pro`、`GPT-4/4o/mini`、`GPT-5/5-mini/5-nano`、`GPTs`
 
 🔍 回复格式与真实 API 完全一致，适配几乎所有客户端
 
@@ -31,7 +31,8 @@
 > - [x] 流式、非流式传输
 > - [x] 免登录 GPT-3.5 对话
 > - [x] GPT-3.5 模型对话（传入模型名不包含 gpt-4，则默认使用 gpt-3.5，也就是 text-davinci-002-render-sha）
-> - [x] GPT-4 系列模型对话（传入模型名包含: gpt-4，gpt-4o，gpt-4o-mini，gpt-4-moblie, gpt-5 即可使用对应模型，需传入 AccessToken）
+> - [x] GPT-4 系列模型对话（传入模型名包含: gpt-4，gpt-4o，gpt-4o-mini，gpt-4-moblie 即可使用对应模型，需传入 AccessToken）
+> - [x] GPT-5 系列模型对话（传入模型名包含: gpt-5, gpt-5-mini, gpt-5-nano 即可使用对应模型，需传入 AccessToken）
 > - [x] O1/O3/O4 系列模型对话（传入模型名包含 o3，o4-mini等 即可使用对应模型，需传入 AccessToken）
 > - [x] GPT-4 模型画图、代码、联网
 > - [x] 支持 GPTs（传入模型名：gpt-4-gizmo-g-*，前面模型可改，Team工作区项目需要使用这个）
@@ -49,7 +50,7 @@
 > - [x] 支持官网原生镜像
 > - [x] 后台账号池随机抽取，`Seed` 设置随机账号
 > - [x] 输入 `RefreshToken` 或 `AccessToken` 直接登录使用
-> - [x] 支持 `O3-mini/high`、`O1/mini/Pro`、`GPT-4/4o/mini`
+> - [x] 支持 `O3-mini/high`、`O1/mini/Pro`、`GPT-4/4o/mini`、`GPT-5/5-mini/5-nano`
 > - [x] 敏感信息接口禁用、部分设置接口禁用
 > - [x] /login 登录页面，注销后自动跳转到登录页面
 > - [x] /?token=xxx 直接登录, xxx 为 `RefreshToken` 或 `AccessToken` 或 `SeedToken` (随机种子)
